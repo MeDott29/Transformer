@@ -1,11 +1,10 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (
-    Dense, LayerNormalization, Dropout
+    Dense, LayerNormalization, Dropout, Layer
 )
-from tensorflow.keras import Model
 from models.attention.multi_head_attention import MultiHeadAttention
 
-class EncoderLayer(Model, ff_dim, d_model):
+class EncoderLayer(Layer, ff_dim, d_model):
   def __init__(self):
     super(EncoderLayer, self).__init__()
     
