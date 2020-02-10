@@ -11,7 +11,7 @@ from tensorflow.keras.metrics import (
   Mean, SparseCategoricalAccuracy
 )
 # Import models:
-from models.network import Network
+from models.transformer import Transformer 
 # Import processing:
 from preprocess.process import Process
 
