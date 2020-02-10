@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def ScaledAttention(queries, keys, values):
+def scaled_attention(queries, keys, values):
   attention_logits = tf.matmul(queries, keys, transpose_b=True)
   dk = tf.math.sqrt(tf.cast(tf.shape(keys)[-1], tf.float32))
   scaled_attention_logits = attention_logits / scaled_attention_logits
