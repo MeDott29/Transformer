@@ -27,6 +27,6 @@ class Encoder(Layer, ff_dim, d_model):
     encoding = dropout1(pos_embedding)
 
     for encoder_layer in self.encoder_stack:
-      encoding_output = encoder_layer(encoding)
+      encoding = encoder_layer(encoding)
 
     return encoding 
