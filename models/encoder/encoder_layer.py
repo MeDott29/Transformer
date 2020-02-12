@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (
-    Dense, LayerNormalization, Dropout
+  Dense, LayerNormalization, Dropout, Layer
 )
 from models.attention.multi_head_attention import MultiHeadAttention
 
