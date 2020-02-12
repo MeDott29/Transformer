@@ -4,11 +4,11 @@ from tensorflow.keras.layers import (
 )
 from models.attention.multi_head_attention import MultiHeadAttention
 
-class EncoderLayer(Layer, ff_dim, d_model):
+class EncoderLayer(Layer, ff_dim, d_model, dk, dv, heads):
   def __init__(self):
     super(EncoderLayer, self).__init__()
     
-    self.multiHeadAttention = MultiHeadAttention()
+    self.multiHeadAttention = MultiHeadAttention(d_model, dk, dv, heads)
 
     self.ff = Dense(ff_dim)
     self.o = Dense(d_model)
