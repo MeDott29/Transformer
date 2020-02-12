@@ -5,17 +5,24 @@ from tensorflow.keras.layers import (
     BatchNormalization, concatenate, MaxPool2D
 )
 from tensorflow.keras import Model
+from models.encoder.encoder import Encoder
+from models.encoder.decoder import Decoder
 
 #Defining network Below:
 class Transformer(Model):
+
   def __init__(self):
     super(UNet, self).__init__()
-    # Define layers of the network:
+
+    self.encoder = Encoder()
+    self.decoder = Decoder()
+
+    self.w_out = Dense()
 
 
   def call(self, x, training=False):
-    # Call layers of network on input x
-    # Use the training variable to handle adding layers such as Dropout
-    # and Batch Norm only during training
+    latent = self.encoder(x)
 
+    decoder_logits = self.decoder(latent, x)
+    transformed_logits = self.w_out(decoder_logits, activation='softmax')
     return x
