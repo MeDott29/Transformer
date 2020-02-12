@@ -1,14 +1,14 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (
-    Dense, LayerNormalization, Dropout, Layer
+  Dense, LayerNormalization, Dropout, Layer
 )
 from models.encoder.decoder_layer import DecoderLayer
 from models.pos_encoding.pos_encoding import PosEncoding
 
-class Decoder(Layer, ff_dim, d_model):
+class Decoder(Layer):
 
   def __init__(self):
-    super(Decoder, self).__init__()
+    super(Decoder, self).__init__(ff_dim, d_model, dk, dv, heads, decoder_dim)
     
     self.posEncoding = PosEncoding()
 
@@ -16,7 +16,7 @@ class Decoder(Layer, ff_dim, d_model):
 
     self.decoder_stack = []
     for i in range(decoder_dim):
-      self.encoder_stack.apped(DecoderLayer(ff_dim, d_model))
+      self.encoder_stack.apped(DecoderLayer(ff_dim, d_model, dk, dv, heads))
 
     self.dropout1 = Dropout()
 

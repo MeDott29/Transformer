@@ -1,16 +1,16 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (
-    Dense, LayerNormalization, Dropout, Layer
+  Dense, LayerNormalization, Dropout, Layer
 )
 from models.attention.multi_head_attention import MultiHeadAttention
 
-class DecoderLayer(Layer, ff_dim, d_model):
+class DecoderLayer(Layer):
 
   def __init__(self):
-    super(DecoderLayer, self).__init__()
+    super(DecoderLayer, self).__init__(ff_dim, d_model, dk, dv, heads)
     
-    self.multiHeadAttention_input = MultiHeadAttention()
-    self.multiHeadAttention_latent = MultiHeadAttention()
+    self.multiHeadAttention_input = MultiHeadAttention(d_model, dk, dv, heads)
+    self.multiHeadAttention_latent = MultiHeadAttention(d_model, dk, dv, heads)
 
     self.ff = Dense(ff_dim)
     self.o = Dense(d_model)
