@@ -1,7 +1,22 @@
 import tensorflow as tf
+import numpy as np
 
+def gen_angles(pos, i, d_model):
+  power = 2 * (i // 2) / d_model
+  return pos / np.power(10000, power)
 
-def pos_encoding(d_model, vocab_size, pos):
-  sin_input = pos / tf.math.pow(pos, (2 * vocab_size) / d_model)
-  encoding_frequency = tf.math.sin(sin_input)
-  return encoding_frequency
+def gen_pose_encoding(pos, d_model):
+  encodings = gen_angles(
+      np.arange(pos)[:, np.newaxis], np.arange(d_model)[np.newaxis, :], d_model
+  )
+
+  # Sin of even dim
+  encodings[:, 0::2] = np.sin(encodings[:, 0::2])
+
+  # Cos of odd dim
+  encodings[:, 1::2] = np.cos(encodings[:, 1::2])
+
+  # Format shape to be 3 dim like inputs
+  encodings = encodings[np.newaxis, :]
+
+  return encodings
