@@ -8,11 +8,12 @@ from models.pos_encoding.pos_encoding import PosEncoding
 class Decoder(Layer):
 
   def __init__(self):
-    super(Decoder, self).__init__(ff_dim, d_model, dk, dv, heads, decoder_dim)
-    
-    self.posEncoding = PosEncoding()
+    super(Decoder, self).__init__(ff_dim, d_model, dk, dv, 
+        heads, vocab_size, decoder_dim, pos_encodings)
 
-    self.embedding = Embedding()
+    self.pos_embedding = pos_embedding
+    
+    self.embedding = Embedding(vocab_size, d_model)
 
     self.decoder_stack = []
     for i in range(decoder_dim):
@@ -21,10 +22,13 @@ class Decoder(Layer):
     self.dropout1 = Dropout()
 
   def call(self, x, training=False):
-    input_embedding = self.embedding(x)
-    pos_embedding = self.posEncoding(x)
+    seq_length = tf.shape(x)[1]
 
-    encoding = dropout1(pos_embedding)
+    input_embedding = self.embedding(x)
+    pos_embedding = self.pos_embedding[:, seq_length:, :]
+    adjusted_input_embedding = input_embedding + pos_embedding
+
+    encoding = dropout1(adjusted_input_embedding)
 
     for decoder_layer in self.decoder_stack:
       encoding = decoder_layer(encoding)

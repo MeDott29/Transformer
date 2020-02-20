@@ -3,16 +3,14 @@ from tensorflow.keras.layers import (
     Dense, LayerNormalization, Dropout, Layer
 )
 from models.encoder.encoder_layer import EncoderLayer
-from models.pos_encoding.pos_encoding import PosEncoding
 
 class Encoder(Layer):
 
   def __init__(self):
-    super(Encoder, self).__init__(ff_dim, d_model, dk, dv, heads, encoder_dim)
+    super(Encoder, self).__init__(ff_dim, d_model, dk, dv, heads, 
+        encoder_dim, vocab_size, pos_encodings)
     
-    self.posEncoding = PosEncoding()
-
-    self.embedding = Embedding()
+    self.embedding = Embedding(vocab_size, d_model)
 
     self.encoder_stack = []
     for i in range(encoder_dim):
@@ -21,10 +19,13 @@ class Encoder(Layer):
     self.dropout1 = Dropout()
 
   def call(self, x, training=False):
-    input_embedding = self.embedding(x)
-    pos_embedding = self.posEncoding(input_embedding)
+    seq_length = tf.shape(x)[1]
 
-    encoding = dropout1(pos_embedding)
+    input_embedding = self.embedding(x)
+    pos_embedding = self.pos_embedding[:, :seq_length, :]
+    adjusted_input_embeddings = input_embeddings + pos_embedding
+
+    encoding = dropout1(adjusted_input_embeddings)
 
     for encoder_layer in self.encoder_stack:
       encoding = encoder_layer(encoding)
