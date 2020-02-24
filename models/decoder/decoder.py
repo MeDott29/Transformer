@@ -2,8 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import (
   Dense, LayerNormalization, Dropout, Layer
 )
-from models.encoder.decoder_layer import DecoderLayer
-from models.pos_encoding.pos_encoding import PosEncoding
+from models.decoder.decoder_layer import DecoderLayer
 
 class Decoder(Layer):
 

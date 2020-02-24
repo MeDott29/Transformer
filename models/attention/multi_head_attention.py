@@ -32,8 +32,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
       projected_values = attention_layer[2](values)
       attention_heads.append(scaled_attention(
         projected_queries, projected_keys, projected_values
-      )
-
+      ))
     attention_logits = tf.concat(attention_heads, -1)
     projected_attention = self.wo(attention_logits)
 
