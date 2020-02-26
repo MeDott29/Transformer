@@ -4,16 +4,14 @@ import matplotlib.pyplot as plt
 
 class Process(object):
 
-  def __init__(self, train_dir, test_dir, batch_size, pre_fetch, img_size):
+  def __init__(self, batch_size, pre_fetch):
     self.batch_size = batch_size
     self.pre_fetch = pre_fetch
-    self.img_size = img_size
-    self.train_dir = train_dir
-    self.test_dir = test_dir
 
   def get_datasets(self):
-    train_dataset = self._build_dataset(self.train_dir, True)
-    test_dataset = self._build_dataset(self.test_dir, False)
+    dataset, info = tfds.load('multi_nli:1.0.0', with_info=True)
+    train = dataset['train']
+    test = dataset['validation_matched']
     return train_dataset, test_dataset
 
   def _build_dataset(self, data_dir, train_data):
@@ -35,15 +33,15 @@ class Process(object):
       dataset = dataset.batch(self.batch_size)
     return dataset  
 
-  def _normalize(self, input_, label):
-    # Normalize input data: 
+ # def _normalize(self, input_, label):
+ #   # Normalize input data: 
 
-    return input_, label
-  
-  def _augment_data(self, input_, label):
-    # Augment training data here
+ #   return input_, label
+ # 
+ # def _augment_data(self, input_, label):
+ #   # Augment training data here
 
-    return input_, label
+ #   return input_, label
   
   @tf.function
   def _load_dataset(self, data_files):
@@ -59,5 +57,5 @@ class Process(object):
 
     return input_, label
   
-  def _test(self):
+#  def _test(self):
     # Add code to display or test data in some way
