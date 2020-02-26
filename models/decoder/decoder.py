@@ -1,31 +1,31 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (
-  Dense, LayerNormalization, Dropout, Layer
+  Dense, LayerNormalization, Dropout, Layer, Embedding
 )
 from models.decoder.decoder_layer import DecoderLayer
 
 class Decoder(Layer):
 
-  def __init__(self):
-    super(Decoder, self).__init__(ff_dim, d_model, dk, dv, 
-        heads, vocab_size, decoder_dim, pos_encodings)
+  def __init__(self, ff_dim, d_model, dk, dv, 
+        heads, vocab_size, decoder_dim, pos_encodings):
+    super(Decoder, self).__init__()
 
-    self.pos_embedding = pos_embedding
+    self.pos_encodings = pos_encodings
     
     self.embedding = Embedding(vocab_size, d_model)
 
     self.decoder_stack = []
     for i in range(decoder_dim):
-      self.encoder_stack.apped(DecoderLayer(ff_dim, d_model, dk, dv, heads))
+      self.decoder_stack.append(DecoderLayer(ff_dim, d_model, dk, dv, heads))
 
-    self.dropout1 = Dropout()
+    self.dropout1 = Dropout(.1)
 
   def call(self, x, training=False):
     seq_length = tf.shape(x)[1]
 
     input_embedding = self.embedding(x)
-    pos_embedding = self.pos_embedding[:, seq_length:, :]
-    adjusted_input_embedding = input_embedding + pos_embedding
+    pos_encodings = self.pos_encodings[:, seq_length:, :]
+    adjusted_input_embedding = input_embedding + pos_encodings
 
     encoding = dropout1(adjusted_input_embedding)
 

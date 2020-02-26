@@ -12,7 +12,7 @@ class Transformer(Model):
       encoder_dim, decoder_dim, label_vocab_dim,
       input_vocab_dim, max_pose):
 
-    super(UNet, self).__init__()
+    super(Transformer, self).__init__()
 
     pos_encodings = pos_encoding(max_pose, d_model)
 

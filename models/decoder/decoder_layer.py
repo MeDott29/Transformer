@@ -6,8 +6,8 @@ from models.attention.multi_head_attention import MultiHeadAttention
 
 class DecoderLayer(Layer):
 
-  def __init__(self):
-    super(DecoderLayer, self).__init__(ff_dim, d_model, dk, dv, heads)
+  def __init__(self, ff_dim, d_model, dk, dv, heads):
+    super(DecoderLayer, self).__init__()
     
     self.multiHeadAttention_input = MultiHeadAttention(d_model, dk, dv, heads)
     self.multiHeadAttention_latent = MultiHeadAttention(d_model, dk, dv, heads)
@@ -19,9 +19,9 @@ class DecoderLayer(Layer):
     self.layernorm2 = LayerNormalization()
     self.layernorm3 = LayerNormalization()
 
-    self.dropout1 = Dropout()
-    self.dropout2 = Dropout()
-    self.dropout3 = Dropout()
+    self.dropout1 = Dropout(.1)
+    self.dropout2 = Dropout(.1)
+    self.dropout3 = Dropout(.1)
 
 
   def call(self, x, training=False):

@@ -5,8 +5,8 @@ from tensorflow.keras.layers import (
 from models.attention.multi_head_attention import MultiHeadAttention
 
 class EncoderLayer(Layer):
-  def __init__(self):
-    super(EncoderLayer, self).__init__(ff_dim, d_model, dk, dv, heads)
+  def __init__(self, ff_dim, d_model, dk, dv, heads):
+    super(EncoderLayer, self).__init__()
     
     self.multiHeadAttention = MultiHeadAttention(d_model, dk, dv, heads)
 
@@ -16,8 +16,8 @@ class EncoderLayer(Layer):
     self.layernorm1 = LayerNormalization()
     self.layernorm2 = LayerNormalization()
 
-    self.dropout1 = Dropout()
-    self.dropout2 = Dropout()
+    self.dropout1 = Dropout(.1)
+    self.dropout2 = Dropout(.1)
 
 
   def call(self, x, training=False):

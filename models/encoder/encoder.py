@@ -1,22 +1,23 @@
 import tensorflow as tf
 from tensorflow.keras.layers import (
-    Dense, LayerNormalization, Dropout, Layer
+    Dense, LayerNormalization, Dropout, Layer, Embedding
 )
 from models.encoder.encoder_layer import EncoderLayer
 
 class Encoder(Layer):
 
-  def __init__(self):
-    super(Encoder, self).__init__(ff_dim, d_model, dk, dv, heads, 
-        encoder_dim, vocab_size, pos_encodings)
+  def __init__(self, ff_dim, d_model, dk, dv, heads, 
+        encoder_dim, vocab_size, pos_encodings):
+
+    super(Encoder, self).__init__()
     
     self.embedding = Embedding(vocab_size, d_model)
 
     self.encoder_stack = []
     for i in range(encoder_dim):
-      self.encoder_stack.apped(EncoderLayer(ff_dim, d_model, dk, dv, heads))
+      self.encoder_stack.append(EncoderLayer(ff_dim, d_model, dk, dv, heads))
 
-    self.dropout1 = Dropout()
+    self.dropout1 = Dropout(.1)
 
   def call(self, x, training=False):
     seq_length = tf.shape(x)[1]

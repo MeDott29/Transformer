@@ -30,9 +30,9 @@ class Train(object):
         self.test_loss = CategoricalAccuracy()
         self.test_accuracy = Mean()
         # Define model:
-        self.model = Transformer()
+        self.model = Transformer(10, 10, 10, 10, 10, 10, 10, 10, 10, 10)
         # Define pre processor (params):
-        preprocessor = Process()
+        preprocessor = Process(32, 1)
         self.train_ds, self.test_ds = preprocessor.get_datasets()
         # Define Checkpoints:
         self.ckpt = tf.train.Checkpoint(step=tf.Variable(1), 
@@ -107,7 +107,7 @@ class Train(object):
 
 
 if __name__ == '__main__':
-    num_ckpts = len([folder for folder in os.listdir('./checkpoints') if os.path.isdir(folder)])
+    numCkpts = len([folder for folder in os.listdir('./checkpoints') if os.path.isdir(folder)])
     parser= argparse.ArgumentParser()
     parser.add_argument('--lr', default=1e-4, type=float)
     parser.add_argument('--epochs', default=10000, type=int)
