@@ -22,8 +22,15 @@ class Process(object):
         lambda inp, val: self._py_encode(inp, val, True))
     val_dataset = val_dataset.map(
         lambda inp, val: self._py_encode(inp, val, False))
-    train_dataset = self._prepare(train_dataset, True)
-    test_dataset = self._prepare(test_dataset, False)
+    train_dataset = train_dataset.take(3)
+    train_dataset = train_dataset.map(
+        lambda inp, val: self._py_shard(inp, val))
+    #train_dataset = train_dataset.flat_map(
+    #    lambda inp, val: tf.data.Dataset.from_tensor_slices([inp, val]))
+    #train_dataset = train_dataset.take(5)
+    #val_dataset = val_dataset.take(5)
+    #train_dataset = self._prepare(train_dataset, True)
+    #val_dataset = self._prepare(val_dataset, False)
     return train_dataset, val_dataset
 
   def _build_encoders(self, train, val):
@@ -56,9 +63,33 @@ class Process(object):
     label = dataset['hypothesis']
     return text, label
 
+  def _py_shard(self, text, label):
+    text, label = tf.py_function(
+        self._shard, [text, label], [tf.int64, tf.int64])
+    print('********* hello **********')
+    print(label)
+    return text, label
+
+  def _shard(self, text, label):
+    text_arr = []
+    label_arr = []
+    print(label.shape[0])
+    for word_index in range(label.shape[0]-1):
+      if tf.random.uniform(()) > .7:
+        text_arr.append(text)
+        label_arr.append(label[word_index:])
+    text_arr.append(text)
+    label_arr.append(label)
+    print(len(text_arr), 'called')
+    print(len(label_arr))
+    return text_arr, label_arr
+
+
   def _py_encode(self, text, label, train):
     text, label = tf.py_function(
         self._encode, [text, label, train], [tf.int64, tf.int64])
+    text.set_shape([None])
+    label.set_shape([None])
     return text, label
 
   def _encode(self, text, label, train):
@@ -77,18 +108,21 @@ class Process(object):
 
   def _prepare(self, dataset, train):
     if train:
-      dataset = dataset.cache().shuffle(
-          self.train_len).padded_batch(self.batch_size, [None])
+      dataset = dataset.cache()
+      dataset = dataset.shuffle(
+          self.train_len).padded_batch(self.batch_size, 
+              padded_shapes=([None],[None]))
       dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     else:
-      dataset = dataset.padded_batch(self.batch_size, [None])
+      dataset = dataset.padded_batch(self.batch_size, 
+          padded_shapes=([None],[None]))
     return dataset  
 
 p = Process(10,1)
 train, val = p.get_datasets()
 for sent, hyp in train.take(1):
-  print(sent.numpy())
-  print(hyp.numpy())
+  print(sent.shape)
+  print(hyp.shape)
 for sent, hyp in val.take(1):
-  print(sent.numpy())
-  print(hyp.numpy())
+  print(sent.shape)
+  print(hyp.shape)
