@@ -2,6 +2,7 @@ import tensorflow_datasets as tfds
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
+import numpy as np
 import os
 
 class Process(object):
@@ -25,13 +26,19 @@ class Process(object):
     train_dataset = train_dataset.take(3)
     train_dataset = train_dataset.map(
         lambda inp, val: self._py_shard(inp, val))
-    #train_dataset = train_dataset.flat_map(
-    #    lambda inp, val: tf.data.Dataset.from_tensor_slices([inp, val]))
+    train_dataset.map(lambda inp, val: self._debug(inp, val))
+    train_dataset = train_dataset.flat_map(
+        lambda inp, val: tf.data.Dataset.from_tensor_slices((inp, val)))
     #train_dataset = train_dataset.take(5)
     #val_dataset = val_dataset.take(5)
     #train_dataset = self._prepare(train_dataset, True)
     #val_dataset = self._prepare(val_dataset, False)
     return train_dataset, val_dataset
+
+  def _debug(self, inp, val):
+    print(inp.shape, 'test')
+    print(val.shape)
+    return inp, val
 
   def _build_encoders(self, train, val):
     train_tokenizer = None
@@ -71,17 +78,25 @@ class Process(object):
     return text, label
 
   def _shard(self, text, label):
+    text = text.numpy()
+    label = label.numpy()
     text_arr = []
     label_arr = []
-    print(label.shape[0])
+    keep_lengths = []
     for word_index in range(label.shape[0]-1):
       if tf.random.uniform(()) > .7:
         text_arr.append(text)
-        label_arr.append(label[word_index:])
+        label_arr.append(label)
+        keep_lengths.append(word_index)
     text_arr.append(text)
     label_arr.append(label)
-    print(len(text_arr), 'called')
-    print(len(label_arr))
+    text_arr = np.array(text_arr)
+    label_arr = np.array(label_arr)
+    for i, row_keep in enumerate(keep_lengths):
+      label_arr[i,row_keep+1] = 0
+    print(text_arr, text_arr.shape)
+    print(label_arr, label_arr.shape)
+    print('end of call')
     return text_arr, label_arr
 
 
@@ -120,9 +135,13 @@ class Process(object):
 
 p = Process(10,1)
 train, val = p.get_datasets()
+print('called skeet')
 for sent, hyp in train.take(1):
+  print('called in loop')
   print(sent.shape)
   print(hyp.shape)
 for sent, hyp in val.take(1):
   print(sent.shape)
   print(hyp.shape)
+
+print('finished file')
