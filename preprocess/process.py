@@ -10,7 +10,7 @@ class Process(object):
   def __init__(self, batch_size, pre_fetch):
     self.batch_size = batch_size
     self.pre_fetch = pre_fetch
-    self.train_len = 392702
+    self.train_len = int(392703 * 1.4)
 
   def get_datasets(self):
     dataset, info = tfds.load('multi_nli:1.0.0', with_info=True)
@@ -23,16 +23,14 @@ class Process(object):
         lambda inp, val: self._py_encode(inp, val, True))
     val_dataset = val_dataset.map(
         lambda inp, val: self._py_encode(inp, val, False))
-    train_dataset = train_dataset.take(3)
     train_dataset = train_dataset.map(
         lambda inp, val: self._py_shard(inp, val))
-    train_dataset.map(lambda inp, val: self._debug(inp, val))
     train_dataset = train_dataset.flat_map(
         lambda inp, val: tf.data.Dataset.from_tensor_slices((inp, val)))
-    #train_dataset = train_dataset.take(5)
-    #val_dataset = val_dataset.take(5)
-    #train_dataset = self._prepare(train_dataset, True)
-    #val_dataset = self._prepare(val_dataset, False)
+    train_dataset = train_dataset.take(5)
+    val_dataset = val_dataset.take(5)
+    train_dataset = self._prepare(train_dataset, True)
+    val_dataset = self._prepare(val_dataset, False)
     return train_dataset, val_dataset
 
   def _debug(self, inp, val):
@@ -73,8 +71,6 @@ class Process(object):
   def _py_shard(self, text, label):
     text, label = tf.py_function(
         self._shard, [text, label], [tf.int64, tf.int64])
-    print('********* hello **********')
-    print(label)
     return text, label
 
   def _shard(self, text, label):
@@ -93,10 +89,7 @@ class Process(object):
     text_arr = np.array(text_arr)
     label_arr = np.array(label_arr)
     for i, row_keep in enumerate(keep_lengths):
-      label_arr[i,row_keep+1] = 0
-    print(text_arr, text_arr.shape)
-    print(label_arr, label_arr.shape)
-    print('end of call')
+      label_arr[i,row_keep+1:] = 0
     return text_arr, label_arr
 
 
@@ -133,11 +126,11 @@ class Process(object):
           padded_shapes=([None],[None]))
     return dataset  
 
-p = Process(10,1)
+p = Process(5,1)
 train, val = p.get_datasets()
-print('called skeet')
 for sent, hyp in train.take(1):
   print('called in loop')
+  print(hyp)
   print(sent.shape)
   print(hyp.shape)
 for sent, hyp in val.take(1):
