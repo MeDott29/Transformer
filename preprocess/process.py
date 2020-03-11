@@ -27,16 +27,9 @@ class Process(object):
         lambda inp, val: self._py_shard(inp, val))
     train_dataset = train_dataset.flat_map(
         lambda inp, val: tf.data.Dataset.from_tensor_slices((inp, val)))
-    train_dataset = train_dataset.take(5)
-    val_dataset = val_dataset.take(5)
     train_dataset = self._prepare(train_dataset, True)
     val_dataset = self._prepare(val_dataset, False)
     return train_dataset, val_dataset
-
-  def _debug(self, inp, val):
-    print(inp.shape, 'test')
-    print(val.shape)
-    return inp, val
 
   def _build_encoders(self, train, val):
     train_tokenizer = None
@@ -126,15 +119,3 @@ class Process(object):
           padded_shapes=([None],[None]))
     return dataset  
 
-p = Process(5,1)
-train, val = p.get_datasets()
-for sent, hyp in train.take(1):
-  print('called in loop')
-  print(hyp)
-  print(sent.shape)
-  print(hyp.shape)
-for sent, hyp in val.take(1):
-  print(sent.shape)
-  print(hyp.shape)
-
-print('finished file')
