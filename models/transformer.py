@@ -9,26 +9,28 @@ from models.pos_encoding.pos_encoding import pos_encoding
 class Transformer(Model):
 
   def __init__(self, d_model, ff_dim, dk, dv, heads, 
-      encoder_dim, decoder_dim, label_vocab_dim,
-      input_vocab_dim, max_pose):
+      encoder_dim, decoder_dim, vocab_size, max_pose):
 
     super(Transformer, self).__init__()
+
+    self.d_model = d_model
+    self.vocab_size = vocab_size
 
     pos_encodings = pos_encoding(max_pose, d_model)
 
     self.encoder = Encoder(ff_dim, d_model, dk, dv, 
-        heads, encoder_dim, input_vocab_dim, pos_encodings)
+        heads, encoder_dim, vocab_size, pos_encodings)
     self.decoder = Decoder(ff_dim, d_model, dk, dv, 
-        heads, decoder_dim, label_vocab_dim, pos_encodings)
+        heads, decoder_dim, vocab_size, pos_encodings)
 
-    self.w_out = Dense(label_vocab_dim)
+    self.w_out = Dense(vocab_size)
 
 
   def call(self, encoder_input, decoder_input):
-    pos_encoder_input = pos_encoding(self.d_model, vocab_size, encoder_input)
-    latent = self.encoder(pos_encoder_input)
+    latent = self.encoder(encoder_input)
 
-    pos_decoder_input = pos_encoding(self.d_model, self.vocab_size, decoder_input)
+    pos_decoder_input = pos_encoding(self.d_model, 
+        self.vocab_size, decoder_input)
     decoder_logits = self.decoder(latent, x)
     transformed_logits = self.w_out(decoder_logits, activation='softmax')
 
