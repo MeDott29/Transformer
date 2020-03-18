@@ -55,8 +55,12 @@ class Train(object):
   # Feed forward through and update model on train data:
   @tf.function
   def _update(self, inputs, labels):
+    dec_input = labels[:, :-1]
+    labels = labels[:, 1:]
+    inp_mask, latent_mask, dec_mask = masks(inputs, dec_inputs)
     with tf.GradientTape() as tape:
-      predictions = self.model(inputs, labels, True)
+      predictions = self.model(inputs, dec_inputs, 
+          inp_mask, latent_mask, dec_mask, True)
       loss = self.loss_object(labels, predictions)
     gradients = tape.gradient(loss, self.model.trainable_variables)
     self.optimizer.apply_gradients(
