@@ -25,10 +25,11 @@ class Encoder(Layer):
     seq_length = x.shape[1]
 
     input_embeddings = self.embedding(x)
+    print(self.pos_encodings.shape)
     pos_embedding = self.pos_encodings[:, :seq_length, :]
     adjusted_input_embeddings = input_embeddings + pos_embedding
 
-    encoding = dropout1(adjusted_input_embeddings)
+    encoding = self.dropout1(adjusted_input_embeddings)
 
     for encoder_layer in self.encoder_stack:
       encoding = encoder_layer(encoding)

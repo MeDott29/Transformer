@@ -7,8 +7,10 @@ def gen_angles(pos, i, d_model):
   
 def pos_encoding(pos, d_model):
   encodings = gen_angles(
-      np.arange(pos)[:, np.newaxis], np.arange(d_model)[np.newaxis, :], d_model
+      np.arange(pos)[:, np.newaxis], 
+      np.arange(d_model)[np.newaxis, :], d_model
   )
+
   
   # Sin of even dim
   encodings[:, 0::2] = np.sin(encodings[:, 0::2])

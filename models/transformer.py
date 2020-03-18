@@ -12,6 +12,10 @@ class Transformer(Model):
       encoder_dim, decoder_dim, vocab_size, max_pose):
 
     super(Transformer, self).__init__()
+    
+    heads = 8
+    d_model = 512
+    max_pose = 512
 
     self.d_model = d_model
     self.vocab_size = vocab_size
