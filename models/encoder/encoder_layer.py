@@ -21,7 +21,7 @@ class EncoderLayer(Layer):
 
 
   def call(self, x, training=False):
-    attention = self.multiHeadAttention(x)
+    attention = self.multiHeadAttention(x, x, x)
     attention = self.dropout1(attention, training=training)
     res_norm_attention = self.layernorm1(x + attention)
 

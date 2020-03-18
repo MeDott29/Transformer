@@ -13,14 +13,13 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
     self.d_model = d_model
     self.heads = heads
-
     self.head_layers = []
     for i in range(heads):
       head = []
       head.append(Dense(dk))
       head.append(Dense(dk))
       head.append(Dense(dv))
-      
+      self.head_layers.append(head)
     self.wo = Dense(d_model)
 
   def call(self, queries, keys, values):
@@ -36,4 +35,4 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     attention_logits = tf.concat(attention_heads, -1)
     projected_attention = self.wo(attention_logits)
 
-    return prjected_attention
+    return projected_attention

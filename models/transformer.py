@@ -32,10 +32,7 @@ class Transformer(Model):
 
   def call(self, encoder_input, decoder_input):
     latent = self.encoder(encoder_input)
-
-    pos_decoder_input = pos_encoding(self.d_model, 
-        self.vocab_size, decoder_input)
-    decoder_logits = self.decoder(latent, x)
+    decoder_logits = self.decoder(latent, encoder_input)
     transformed_logits = self.w_out(decoder_logits, activation='softmax')
 
     return x
