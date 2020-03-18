@@ -25,10 +25,10 @@ class Train(object):
     # Define optimizer:
     self.optimizer = Adam()
     # Define metrics for loss:
-    self.train_loss = SparseCategoricalAccuracy()
-    self.train_accuracy = Mean()
-    self.test_loss = SparseCategoricalAccuracy()
-    self.test_accuracy = Mean()
+    self.train_loss = Mean()
+    self.train_accuracy = SparseCategoricalAccuracy()
+    self.test_loss = Mean()
+    self.test_accuracy = SparseCategoricalAccuracy()
     # Define model:
     self.model = Transformer(10, 10, 10, 10, 10, 10, 10, 10, 10)
     # Define pre processor (params):
@@ -46,8 +46,6 @@ class Train(object):
   def _update(self, inputs, labels):
     with tf.GradientTape() as tape:
       predictions = self.model(inputs, labels, True)
-      print(predictions.shape, 'predictions')
-      print(labels.shape, 'labels')
       loss = self.loss_object(labels, predictions)
     gradients = tape.gradient(loss, self.model.trainable_variables)
     self.optimizer.apply_gradients(
