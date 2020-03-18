@@ -32,6 +32,6 @@ class Decoder(Layer):
     encoding = self.dropout1(adjusted_input_embedding)
 
     for decoder_layer in self.decoder_stack:
-      encoding = decoder_layer(encoding)
+      encoding = decoder_layer(encoding, latent)
 
     return encoding 
