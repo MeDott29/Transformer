@@ -24,8 +24,6 @@ class Decoder(Layer):
     seq_length = x.shape[1]
 
     input_embedding = self.embedding(x)
-    print('********')
-    print(input_embedding.shape)
     pos_encodings = self.pos_encodings[:, :seq_length, :]
     adjusted_input_embedding = input_embedding + pos_encodings
 
