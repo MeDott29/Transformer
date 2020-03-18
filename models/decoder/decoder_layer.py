@@ -24,12 +24,13 @@ class DecoderLayer(Layer):
     self.dropout3 = Dropout(.1)
 
 
-  def call(self, x, latent, training=False):
-    input_attention = self.multiHeadAttention_input(x, x, x)
+  def call(self, x, latent, 
+      latent_mask, mask, training=False):
+    input_attention = self.multiHeadAttention_input(x, x, x, mask)
     input_attention = self.dropout1(input_attention, training=training)
     res_norm_input_attention = self.layernorm1(x + input_attention)
 
-    latent_attention = self.multiHeadAttention_latent(x, latent, latent)
+    latent_attention = self.multiHeadAttention_latent(x, latent, latent, latent_mask)
     latent_attention = self.dropout2(latent_attention, training=training)
     res_norm_latent_attention = self.layernorm1(latent_attention + res_norm_input_attention)
 

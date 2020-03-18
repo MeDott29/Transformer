@@ -20,8 +20,8 @@ class EncoderLayer(Layer):
     self.dropout2 = Dropout(.1)
 
 
-  def call(self, x, training=False):
-    attention = self.multiHeadAttention(x, x, x)
+  def call(self, x, mask, training=False):
+    attention = self.multiHeadAttention(x, x, x, mask)
     attention = self.dropout1(attention, training=training)
     res_norm_attention = self.layernorm1(x + attention)
 

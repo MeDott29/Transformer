@@ -21,17 +21,16 @@ class Encoder(Layer):
 
     self.dropout1 = Dropout(.1)
 
-  def call(self, x, training=False):
+  def call(self, x, mask, training=False):
     seq_length = x.shape[1]
 
     input_embeddings = self.embedding(x)
-    print(self.pos_encodings.shape)
     pos_embedding = self.pos_encodings[:, :seq_length, :]
     adjusted_input_embeddings = input_embeddings + pos_embedding
 
     encoding = self.dropout1(adjusted_input_embeddings)
 
     for encoder_layer in self.encoder_stack:
-      encoding = encoder_layer(encoding)
+      encoding = encoder_layer(encoding, mask)
 
     return encoding 

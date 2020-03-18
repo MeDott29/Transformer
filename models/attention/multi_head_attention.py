@@ -22,15 +22,15 @@ class MultiHeadAttention(tf.keras.layers.Layer):
       self.head_layers.append(head)
     self.wo = Dense(d_model)
 
-  def call(self, queries, keys, values):
-    
+  def call(self, queries, keys, values, mask):
     attention_heads = []
     for attention_layer in self.head_layers:
       projected_queries = attention_layer[0](queries)
       projected_keys = attention_layer[1](keys)
       projected_values = attention_layer[2](values)
       attention_heads.append(scaled_attention(
-        projected_queries, projected_keys, projected_values
+        projected_queries, projected_keys, 
+        projected_values, mask
       ))
     attention_logits = tf.concat(attention_heads, -1)
     projected_attention = self.wo(attention_logits)

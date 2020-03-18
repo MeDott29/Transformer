@@ -20,7 +20,9 @@ class Decoder(Layer):
 
     self.dropout1 = Dropout(.1)
 
-  def call(self, x, latent, training=False):
+  def call(self, x, latent, latent_mask,
+      mask, training=False):
+
     seq_length = x.shape[1]
 
     input_embedding = self.embedding(x)
@@ -30,6 +32,6 @@ class Decoder(Layer):
     encoding = self.dropout1(adjusted_input_embedding)
 
     for decoder_layer in self.decoder_stack:
-      encoding = decoder_layer(encoding, latent)
-
+      encoding = decoder_layer(encoding, latent, 
+          latent_mask, mask)
     return encoding 
