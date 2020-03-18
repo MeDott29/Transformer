@@ -20,14 +20,16 @@ class Decoder(Layer):
 
     self.dropout1 = Dropout(.1)
 
-  def call(self, x, training=False):
-    seq_length = tf.shape(x)[1]
+  def call(self, x, latent, training=False):
+    seq_length = x.shape[1]
 
     input_embedding = self.embedding(x)
-    pos_encodings = self.pos_encodings[:, seq_length:, :]
+    print('********')
+    print(input_embedding.shape)
+    pos_encodings = self.pos_encodings[:, :seq_length, :]
     adjusted_input_embedding = input_embedding + pos_encodings
 
-    encoding = dropout1(adjusted_input_embedding)
+    encoding = self.dropout1(adjusted_input_embedding)
 
     for decoder_layer in self.decoder_stack:
       encoding = decoder_layer(encoding)

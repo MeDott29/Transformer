@@ -45,7 +45,7 @@ class Train(object):
   @tf.function
   def _update(self, inputs, labels):
     with tf.GradientTape() as tape:
-      predictions = self.model(inputs, True)
+      predictions = self.model(inputs, labels, True)
       loss = self.loss_object(labels, predictions)
     gradients = tape.gradient(loss, self.model.trainable_variables)
     self.optimizer.apply_gradients(

@@ -30,9 +30,8 @@ class Transformer(Model):
     self.w_out = Dense(vocab_size)
 
 
-  def call(self, encoder_input, decoder_input):
+  def call(self, encoder_input, decoder_input, training=False):
     latent = self.encoder(encoder_input)
-    decoder_logits = self.decoder(latent, encoder_input)
+    decoder_logits = self.decoder(decoder_input, latent)
     transformed_logits = self.w_out(decoder_logits, activation='softmax')
-
     return x
