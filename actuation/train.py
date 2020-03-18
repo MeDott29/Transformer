@@ -29,11 +29,22 @@ class Train(object):
     self.train_accuracy = SparseCategoricalAccuracy()
     self.test_loss = Mean()
     self.test_accuracy = SparseCategoricalAccuracy()
-    # Define model:
-    self.model = Transformer(10, 10, 10, 10, 10, 10, 10, 10, 10)
     # Define pre processor (params):
     preprocessor = Process(32, 1)
-    self.train_ds, self.test_ds = preprocessor.get_datasets()
+    self.train_ds, self.test_ds, encoder_stats = preprocessor.get_datasets()
+    # Define model dims
+    d_model = 512
+    ff_dim = 2048
+    heads = 8
+    encoder_dim = 6
+    decoder_dim = 6
+    dk = d_model / heads
+    dv = d_model / heads
+    vocab_size = encoder_stats['vocab_size']
+    max_pos = 10000
+    # Define model:
+    self.model = Transformer(d_model, ff_dim, dk, dv, heads,
+        encoder_dim, decoder_dim, vocab_size, max_pos)
     # Define Checkpoints:
     self.ckpt = tf.train.Checkpoint(step=tf.Variable(1), 
       optimizer=self.optimizer, net=self.model)
@@ -97,7 +108,8 @@ class Train(object):
   def train(self):
     self._restore()
     for epoch in range(self.epochs):
-      for inputs, labels in self.train_ds:
+      for batch, (inputs, labels) in enumerate(self.train_ds):
+        print(batch)
         self._update(inputs, labels)
       for testInputs, testLabels in self.test_ds:
         self._test(testInputs, testLabels)
@@ -112,7 +124,6 @@ if __name__ == '__main__':
   parser.add_argument('--lr', default=1e-4, type=float)
   parser.add_argument('--epochs', default=10000, type=int)
   parser.add_argument('--ckpt_dir', default=str(numCkpts), type=str)
-  parser.add_argument('--data_dir', default='./data/train', type=str)
   parser.add_argument('--batch_size', default=32, type=int)
   parser.add_argument('--pre_fetch', default=1, type=int)
   args = parser.parse_args()

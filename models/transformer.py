@@ -9,18 +9,14 @@ from models.pos_encoding.pos_encoding import pos_encoding
 class Transformer(Model):
 
   def __init__(self, d_model, ff_dim, dk, dv, heads, 
-      encoder_dim, decoder_dim, vocab_size, max_pose):
+      encoder_dim, decoder_dim, vocab_size, max_pos):
 
     super(Transformer, self).__init__()
     
-    heads = 8
-    d_model = 512
-    max_pose = 512
-
     self.d_model = d_model
     self.vocab_size = vocab_size
 
-    pos_encodings = pos_encoding(max_pose, d_model)
+    pos_encodings = pos_encoding(max_pos, d_model)
 
     self.encoder = Encoder(ff_dim, d_model, dk, dv, 
         heads, encoder_dim, vocab_size, pos_encodings)

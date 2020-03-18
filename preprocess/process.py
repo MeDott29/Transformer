@@ -27,7 +27,7 @@ class Process(object):
         lambda inp, val: self._py_encode(inp, val, False))
     train_dataset = self._prepare(train_dataset, True)
     val_dataset = self._prepare(val_dataset, False)
-    return train_dataset, val_dataset
+    return train_dataset, val_dataset, {'vocab_size': self.test_tokenizer.vocab_size}
 
   def _build_encoders(self, train, val):
     train_tokenizer = None
