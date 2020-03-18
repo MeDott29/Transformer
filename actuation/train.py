@@ -3,12 +3,12 @@ import argparse
 import logging
 import tensorflow as tf
 # Import losses:
-from tensorflow.keras.losses import CategoricalCrossentropy
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
 # Import optimizers:
 from tensorflow.keras.optimizers import Adam
 # Import metrics:
 from tensorflow.keras.metrics import (
-  Mean, CategoricalAccuracy
+  Mean, SparseCategoricalAccuracy
 )
 # Import models:
 from models.transformer import Transformer 
@@ -21,13 +21,13 @@ class Train(object):
     self.lr = params.lr
     self.epochs = params.epochs
     # Define loss:
-    self.loss_object = CategoricalCrossentropy()
+    self.loss_object = SparseCategoricalCrossentropy()
     # Define optimizer:
     self.optimizer = Adam()
     # Define metrics for loss:
-    self.train_loss = CategoricalAccuracy()
+    self.train_loss = SparseCategoricalAccuracy()
     self.train_accuracy = Mean()
-    self.test_loss = CategoricalAccuracy()
+    self.test_loss = SparseCategoricalAccuracy()
     self.test_accuracy = Mean()
     # Define model:
     self.model = Transformer(10, 10, 10, 10, 10, 10, 10, 10, 10)
@@ -46,6 +46,8 @@ class Train(object):
   def _update(self, inputs, labels):
     with tf.GradientTape() as tape:
       predictions = self.model(inputs, labels, True)
+      print(predictions.shape, 'predictions')
+      print(labels.shape, 'labels')
       loss = self.loss_object(labels, predictions)
     gradients = tape.gradient(loss, self.model.trainable_variables)
     self.optimizer.apply_gradients(
