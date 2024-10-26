@@ -32,10 +32,10 @@ class Process(object):
   def _build_encoders(self, train, val):
     train_tokenizer = None
     if (os.path.exists('tokenizers/train_tokenizer.subwords')):
-      train_tokenizer = tfds.features.text.SubwordTextEncoder \
+      train_tokenizer = tfds.features.Text.SubwordTextEncoder \
         .load_from_file('tokenizers/train_tokenizer')
     else:
-      train_tokenizer = tfds.features.text.SubwordTextEncoder \
+      train_tokenizer = tfds.features.Text.SubwordTextEncoder \
         .build_from_corpus(
             (inp.numpy() for inp, label in train), 
             2**13)
@@ -43,10 +43,10 @@ class Process(object):
   
     test_tokenizer = None
     if (os.path.exists('tokenizers/test_tokenizer.subwords')):
-      test_tokenizer = tfds.features.text.SubwordTextEncoder \
+      test_tokenizer = tfds.features.Text.SubwordTextEncoder \
         .load_from_file('tokenizers/test_tokenizer')
     else:
-      test_tokenizer = tfds.features.text.SubwordTextEncoder \
+      test_tokenizer = tfds.features.Text.SubwordTextEncoder \
         .build_from_corpus(
             (label.numpy() for inp, label in train), 2**13)
       test_tokenizer.save_to_file('tokenizers/test_tokenizer')
