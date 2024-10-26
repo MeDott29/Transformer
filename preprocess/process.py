@@ -13,7 +13,7 @@ class Process(object):
     self.train_len = 392703
 
   def get_datasets(self):
-    dataset, info = tfds.load('multi_nli:1.0.0', with_info=True)
+    dataset, info = tfds.load('multi_nli:1.1.0', with_info=True)
     train_dataset = dataset['train']
     val_dataset = dataset['validation_matched']
     train_dataset = train_dataset.map(self._unpack_vars)
